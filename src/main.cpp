@@ -1,20 +1,34 @@
 #include <ncurses.h>
+#include <unistd.h>
 #include "window.hpp"
+#include "session.hpp"
 
 int main() {
 
-  initscr();
-  raw();
-  keypad(stdscr, TRUE);
-  noecho();
+  CursesSession session;
+  session.add_settings(CursesSession::RAW
+                      | CursesSession::KEYPAD
+                      | CursesSession::NOECHO
+                      | CursesSession::CURSOR_NONE);
 
-  auto *w = new Window(nullptr, {3, 3}, 20, 20);
-  w->printf("test");
+  Window w{nullptr, {3, 3}, 20, 20};
 
-  refresh();
-  getch();
+  session.register_callback('a', [&w](decltype(KEY_UP)) {
+      w.printf({1,1}, "A pressed");
+      w.refresh();
+      return false;
+    });
+  session.register_callback('q', [&w](decltype(KEY_UP)) {
+      w.printf({1,1}, "Goodbye    ");
+      w.refresh();
+      sleep(3);
+      return true;
+    });
 
-  delete w;
-  endwin();
+  session.refresh();
+  w.refresh();
+
+  session.loop();
+
   return 0;
 }

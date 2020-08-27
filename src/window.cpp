@@ -24,13 +24,13 @@ Window::Window(Window *parent, Coords pos, int w, int h)
   // Make a border around the window
   box(m_win, 0, 0);
 
-  refresh();
+  this->refresh();
 }
 
 
 Window::~Window() {
   wborder(m_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-  refresh();
+  this->refresh();
   delwin(m_win);
 }
 
