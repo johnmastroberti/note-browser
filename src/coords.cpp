@@ -1,4 +1,15 @@
 #include "coords.hpp"
+
+Coords::Coords(const std::initializer_list<int>& l) {
+  if (l.size() != 2) throw;
+  auto it = l.begin();
+  x = *it;
+  ++it;
+  y = *it;
+}
+
+
+
 Coords& Coords::operator+=(const Coords& o) {
   x += o.x;
   y += o.y;
