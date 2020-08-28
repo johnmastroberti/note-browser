@@ -44,5 +44,10 @@ class Window {
       if (ret != OK) throw;
     }
 
+    inline auto get_winptr() { return m_win; }
+    inline auto get_width() const { return m_width; }
+    inline auto get_height() const { return m_height; }
+    inline auto get_pos() const { return m_pos; }
+
 };
 

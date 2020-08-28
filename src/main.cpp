@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "window.hpp"
 #include "session.hpp"
+#include "menu.hpp"
 
 int main() {
 
@@ -11,22 +12,14 @@ int main() {
                       | CursesSession::NOECHO
                       | CursesSession::CURSOR_NONE);
 
-  Window w{nullptr, {3, 3}, 20, 20};
+  Menu m{"Test menu"s, {{"Item 1"s, "Desc 1"s}, {"Item 2"s, "Desc 2"s}}};
 
-  session.register_callback('a', [&w](decltype(KEY_UP)) {
-      w.printf({1,1}, "A pressed");
-      w.refresh();
-      return false;
-    });
-  session.register_callback('q', [&w](decltype(KEY_UP)) {
-      w.printf({1,1}, "Goodbye    ");
-      w.refresh();
-      sleep(3);
+  session.register_callback('q', [](decltype(KEY_UP)) {
       return true;
     });
 
   session.refresh();
-  w.refresh();
+  m.refresh();
 
   session.loop();
 
