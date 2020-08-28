@@ -24,7 +24,7 @@ class Menu : public Window {
         const std::vector<MenuItem>& items = {},
         Window *parent = nullptr,
         Coords pos = {0,0},
-        int w=-1, int h=-1);
+        int w=-1, int h=-1, uint64_t opts=0);
     ~Menu();
     Menu(const Menu&) = delete;
     Menu& operator=(const Menu&) = delete;
@@ -33,5 +33,11 @@ class Menu : public Window {
 
     void set_title(const std::string& title);
     void set_items(const std::vector<MenuItem>& items);
+
+    MenuItem get_current_item() const;
+    void sel_up();
+    void sel_down();
+    void scroll_up();
+    void scroll_down();
 };
 

@@ -17,7 +17,9 @@ class Window {
     void update_dims();
 
   public:
-    Window(Window *parent = nullptr, Coords pos = {0,0}, int w=-1, int h=-1);
+    enum WindowOpt : uint64_t { NO_BORDER = 1<<0 };
+
+    Window(Window *parent = nullptr, Coords pos = {0,0}, int w=-1, int h=-1, uint64_t opts=0);
 
     ~Window();
 
@@ -30,6 +32,8 @@ class Window {
     void move(Coords new_pos);
     void refresh();
     void redraw();
+
+    void redraw_border();
 
     template<typename... Args>
     void printf(const char *fmt, Args... args) {
@@ -44,10 +48,16 @@ class Window {
       if (ret != OK) throw;
     }
 
+    void println(Coords pos1, Coords pos2, decltype(ACS_HLINE) symb);
+
+    void printch(Coords pos, decltype(ACS_HLINE) symb);
+
     inline auto get_winptr() { return m_win; }
     inline auto get_width() const { return m_width; }
     inline auto get_height() const { return m_height; }
     inline auto get_pos() const { return m_pos; }
+
+
 
 };
 

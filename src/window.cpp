@@ -1,6 +1,7 @@
+#include <cmath>
 #include "window.hpp"
 
-Window::Window(Window *parent, Coords pos, int w, int h)
+Window::Window(Window *parent, Coords pos, int w, int h, uint64_t opts)
   : m_parent{parent}, m_pos{pos}, m_width{w}, m_height{h}
 {
   // Set width and height to the max width and height if they are negative
@@ -22,7 +23,8 @@ Window::Window(Window *parent, Coords pos, int w, int h)
     m_win = newwin(m_height, m_width, pos.y, pos.x);
 
   // Make a border around the window
-  box(m_win, 0, 0);
+  if ((opts & NO_BORDER) == 0)
+    box(m_win, 0, 0);
 
   this->refresh();
 }
@@ -64,6 +66,28 @@ void Window::refresh() {
 
 void Window::redraw() {
   redrawwin(m_win);
+}
+
+
+void Window::redraw_border() {
+  box(m_win, 0, 0);
+}
+
+
+void Window::println(Coords pos1, Coords pos2, decltype(ACS_HLINE) symb) {
+  auto diff = pos2 - pos1;
+  if (diff.x == 0) {
+    auto& top = (diff.y > 0) ? pos1 : pos2;
+    mvwvline(m_win, top.y, top.x, symb, std::abs(diff.y));
+  } else if (diff.y == 0) {
+    auto left = (diff.x > 0) ? pos1 : pos2;
+    mvwhline(m_win, left.y, left.x, symb, std::abs(diff.x));
+  }
+}
+
+
+void Window::printch(Coords pos, decltype(ACS_HLINE) symb) {
+  mvwaddch(m_win, pos.y, pos.x, symb);
 }
 
 

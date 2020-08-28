@@ -4,10 +4,10 @@ Menu::Menu(const std::string& title,
     const std::vector<MenuItem>& items,
     Window *parent,
     Coords pos,
-    int w, int h)
+    int w, int h, uint64_t opts)
   : Window{parent, pos, w, h},
     m_title{title}, m_items{items},
-    m_subwin{this, {0, 2}}
+    m_subwin{this, {1, 3}, w, h, Window::NO_BORDER | opts}
 {
   // Initialize the items array
   m_itemsptr = new ITEM*[items.size()+1];
@@ -18,12 +18,18 @@ Menu::Menu(const std::string& title,
 
   // Initialize the menu and connect it to the windows
   m_menu = new_menu(m_itemsptr);
+  set_menu_mark(m_menu, "");
   set_menu_win(m_menu, get_winptr());
   set_menu_sub(m_menu, m_subwin.get_winptr());
 
   // Draw the title
   if (m_title.size() > static_cast<unsigned>(get_width() - 2))
     m_title = m_title.substr(0, get_width() - 2);
+
+  // Fix up the dividing line between title and menu items
+  println({0,2}, {get_width(),2}, ACS_HLINE);
+  printch({0,2}, ACS_LTEE);
+  printch({get_width()-1,2}, ACS_RTEE);
 
   printf({1,1}, m_title.c_str());
 
@@ -42,6 +48,33 @@ Menu::~Menu() {
   delete[] m_itemsptr;
 }
 
+
+MenuItem Menu::get_current_item() const {
+  if (auto curr = current_item(m_menu))
+    return m_items.at(item_index(curr));
+  else
+    return MenuItem{};
+}
+
+
+void Menu::sel_up() {
+  menu_driver(m_menu, REQ_UP_ITEM);
+}
+
+
+void Menu::sel_down() {
+  menu_driver(m_menu, REQ_DOWN_ITEM);
+}
+
+
+void Menu::scroll_up() {
+  menu_driver(m_menu, REQ_SCR_ULINE);
+}
+
+
+void Menu::scroll_down() {
+  menu_driver(m_menu, REQ_SCR_DLINE);
+}
 
 
 void Menu::set_title(const std::string& ) {}
