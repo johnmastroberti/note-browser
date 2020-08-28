@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <functional>
 #include <unordered_map>
+#include <utility>
 
 class CursesSession {
   // Abstraction of the ncurses free functions related to global
@@ -26,6 +27,10 @@ class CursesSession {
     };
     void add_settings(uint64_t settings);
     void refresh();
+
+    std::pair<int, int> get_dims() const;
+    inline int get_width() const { return get_dims().first; }
+    inline int get_height() const { return get_dims().second; }
 
     bool register_callback(ktype key, const std::function<bool(ktype)>& callback);
     void loop();

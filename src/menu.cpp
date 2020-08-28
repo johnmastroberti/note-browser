@@ -7,7 +7,7 @@ Menu::Menu(const std::string& title,
     int w, int h, uint64_t opts)
   : Window{parent, pos, w, h},
     m_title{title}, m_items{items},
-    m_subwin{this, {1, 3}, w, h, Window::NO_BORDER | opts}
+    m_subwin{this, {pos.x+1, pos.y + 3}, w-2, h-4, Window::NO_BORDER | opts}
 {
   // Initialize the items array
   m_itemsptr = new ITEM*[items.size()+1];
@@ -21,6 +21,9 @@ Menu::Menu(const std::string& title,
   set_menu_mark(m_menu, "");
   set_menu_win(m_menu, get_winptr());
   set_menu_sub(m_menu, m_subwin.get_winptr());
+
+  // Allow as many menu items to display as possible
+  set_menu_format(m_menu, m_subwin.get_height(), 1);
 
   // Draw the title
   if (m_title.size() > static_cast<unsigned>(get_width() - 2))

@@ -52,3 +52,9 @@ void CursesSession::loop() {
   }
 }
 
+
+std::pair<int, int> CursesSession::get_dims() const {
+  int w,h;
+  getmaxyx(stdscr, h, w);
+  return {w, h};
+}
