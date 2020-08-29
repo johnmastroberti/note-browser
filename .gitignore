@@ -1,5 +1,6 @@
 *.o
 app
+appd
 tags
 ncurses-testing/*
 log.txt
