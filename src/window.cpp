@@ -94,3 +94,34 @@ void Window::printch(Coords pos, decltype(ACS_HLINE) symb) {
 void Window::update_pos()  { getyx(m_win, m_pos.y, m_pos.x); }
 void Window::update_dims() { getmaxyx(m_win, m_height, m_width); }
 
+void Window::display_title(std::string title) {
+  // Writes the string title on the first line of the window,
+  // followed by a horizontal line below
+  if (title.size()) {
+    // Trim title length if necessary
+    if (title.size() > static_cast<unsigned>(get_width()-2)) {
+      title = title.substr(0, get_width() - 2);
+      title[get_width()-2] = '.';
+      title[get_width()-3] = '.';
+      title[get_width()-4] = '.';
+    }
+
+    // Fix up the dividing line between title and menu items
+    println({0,2}, {get_width(),2}, ACS_HLINE);
+    printch({0,2}, ACS_LTEE);
+    printch({get_width()-1,2}, ACS_RTEE);
+
+    printf({1,1}, title.c_str());
+  } else {
+    // Clear the title and line below
+    std::string blank;
+    blank.resize(get_width()-2);
+    for (auto& c : blank) c = ' ';
+    printf({1,1}, blank.c_str());
+    printf({1,2}, blank.c_str());
+    // Fix up the border
+    printch({0,2}, ACS_VLINE);
+    printch({get_width()-1,2}, ACS_VLINE);
+  }
+}
+

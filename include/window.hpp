@@ -35,6 +35,8 @@ class Window {
 
     void redraw_border();
 
+    void display_title(std::string title);
+
     template<typename... Args>
     void printf(const char *fmt, Args... args) {
       auto ret = wprintw(m_win, fmt, args...);

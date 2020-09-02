@@ -26,15 +26,7 @@ Menu::Menu(const std::string& title,
   set_menu_format(m_menu, m_subwin.get_height(), 1);
 
   // Draw the title
-  if (m_title.size() > static_cast<unsigned>(get_width() - 2))
-    m_title = m_title.substr(0, get_width() - 2);
-
-  // Fix up the dividing line between title and menu items
-  println({0,2}, {get_width(),2}, ACS_HLINE);
-  printch({0,2}, ACS_LTEE);
-  printch({get_width()-1,2}, ACS_RTEE);
-
-  printf({1,1}, m_title.c_str());
+  display_title(m_title);
 
   // Place the menu in the subwindow
   post_menu(m_menu);
@@ -80,5 +72,9 @@ void Menu::scroll_down() {
 }
 
 
-void Menu::set_title(const std::string& ) {}
+void Menu::set_title(const std::string& title) {
+  m_title = title;
+  display_title(m_title);
+}
+
 void Menu::set_items(const std::vector<MenuItem>& ) {}
