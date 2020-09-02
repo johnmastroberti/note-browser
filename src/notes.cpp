@@ -37,7 +37,7 @@ NoteFile::NoteFile(const fs::path& file)
   // Parse section headings into NoteSection objects
   for (auto& line : section_lines) {
     auto sec_start = line.find("section");
-    m_sections.push_back({static_cast<unsigned>((sec_start-1)/3), line.substr(sec_start+9, line.size()-1)});
+    m_sections.push_back({static_cast<unsigned>((sec_start-1)/3), line.substr(sec_start+8, line.size()-sec_start-8-1)});
   }
 
 
@@ -48,6 +48,7 @@ NoteBook::NoteBook(const fs::path& course)
   : m_course_path{course},
     m_notes_path{course / "notes"}
 {
+  if (!fs::is_directory(m_notes_path)) throw;
   // Get the course name
   std::ifstream readme;
   readme.open(course / "README.md");
@@ -58,12 +59,22 @@ NoteBook::NoteBook(const fs::path& course)
   // formatted tex file in the notes directory
   std::regex note_format{".*[0-9]{2}-[0-9]{2}.tex", std::regex_constants::egrep};
   for (const auto& file : fs::directory_iterator(m_notes_path)) {
-    std::cout << file.path().string();
+    //std::cout << file.path().string();
     if (std::regex_match(file.path().string(), note_format)) {
-      std::cout << " matches";
+      //std::cout << " matches";
       m_notes.push_back(NoteFile{file.path()});
     }
-    std::cout << "\n";
+    //std::cout << "\n";
   }
 
+}
+
+
+NoteBinder::NoteBinder(const fs::path& semester) : m_books{} {
+  for (auto& p : fs::directory_iterator(semester)) {
+    if (!fs::is_directory(p)) continue;
+    auto notes_path = p / fs::path("notes");
+    if (!fs::is_directory(notes_path)) continue;
+    m_books.emplace_back(p);
+  }
 }
