@@ -1,5 +1,6 @@
 #include "notes.hpp"
 #include <iostream>
+#include <cstring>
 #include <fstream>
 #include <regex>
 
@@ -30,7 +31,8 @@ NoteFile::NoteFile(const fs::path& file)
   }
 
   // Set display name to date contents
-  m_display_name = date.substr(6, date.size()-1);
+  m_display_name = date.substr(strlen("\\date{"),
+                              date.size()-strlen("\\date{")-strlen("}"));
 
   // Parse section headings into NoteSection objects
   for (auto& line : section_lines) {
