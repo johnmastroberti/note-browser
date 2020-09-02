@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-Iinclude -Wall -Wextra -Wpedantic -Wshadow -Werror -std=c++20
+CXXFLAGS=-Iinclude -Wall -Wextra -Wpedantic -Wshadow -Wno-narrowing -Werror -std=c++20
 DEBUG_FLAGS=-g
 RELEASE_FLAGS=-O3 -flto
 LD=g++
@@ -45,9 +45,11 @@ obj/menu.o: src/menu.cpp include/menu.hpp include/window.hpp include/coords.hpp
 objd/menu.o: src/menu.cpp include/menu.hpp include/window.hpp include/coords.hpp
 obj/window.o: src/window.cpp include/window.hpp include/coords.hpp
 objd/window.o: src/window.cpp include/window.hpp include/coords.hpp
-obj/main.o: src/main.cpp include/window.hpp include/coords.hpp include/session.hpp include/menu.hpp include/notes.hpp
-objd/main.o: src/main.cpp include/window.hpp include/coords.hpp include/session.hpp include/menu.hpp include/notes.hpp
+obj/main.o: src/main.cpp include/window.hpp include/coords.hpp include/session.hpp include/menu.hpp include/notes.hpp include/view.hpp
+objd/main.o: src/main.cpp include/window.hpp include/coords.hpp include/session.hpp include/menu.hpp include/notes.hpp include/view.hpp
 obj/coords.o: src/coords.cpp include/coords.hpp
 objd/coords.o: src/coords.cpp include/coords.hpp
+obj/view.o: src/view.cpp include/view.hpp include/window.hpp include/coords.hpp include/menu.hpp include/notes.hpp include/session.hpp
+objd/view.o: src/view.cpp include/view.hpp include/window.hpp include/coords.hpp include/menu.hpp include/notes.hpp include/session.hpp
 obj/session.o: src/session.cpp include/session.hpp
 objd/session.o: src/session.cpp include/session.hpp
