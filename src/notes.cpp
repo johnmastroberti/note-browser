@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <regex>
+#include <algorithm>
 
 NoteFile::NoteFile(const fs::path& file)
   : m_path{file}, m_file_name{file.filename()}
@@ -20,7 +21,7 @@ NoteFile::NoteFile(const fs::path& file)
   std::vector<std::string> section_lines;
   std::string scratch;
   std::regex date_regex{"\\\\date{.*}", std::regex_constants::grep};
-  std::regex section_regex{"\\\\(sub){1,}.*", std::regex_constants::egrep};
+  std::regex section_regex{"\\\\(sub)*section.*", std::regex_constants::egrep};
   while(notefile.good()) {
     std::getline(notefile, scratch);
     if (!notefile.good()) break;
@@ -67,6 +68,19 @@ NoteBook::NoteBook(const fs::path& course)
     //std::cout << "\n";
   }
 
+  // Sort the notes files in choronological order
+  auto note_sort = [](const NoteFile& file1, const NoteFile& file2) {
+    const auto& filename1 = file1.m_file_name;
+    const auto& filename2 = file2.m_file_name;
+    // File name format: mm-dd.tex
+    auto mm1 = stoi(filename1.substr(0, 2));
+    auto dd1 = stoi(filename1.substr(3, 2));
+    auto mm2 = stoi(filename2.substr(0, 2));
+    auto dd2 = stoi(filename2.substr(3, 2));
+    return std::make_pair(mm1, dd1) < std::make_pair(mm2, dd2);
+  };
+  std::sort(m_notes.begin(), m_notes.end(), note_sort);
+
 }
 
 
@@ -77,4 +91,8 @@ NoteBinder::NoteBinder(const fs::path& semester) : m_books{} {
     if (!fs::is_directory(notes_path)) continue;
     m_books.emplace_back(p);
   }
+
+  // Sort the books in alphabetical order
+  std::sort(m_books.begin(), m_books.end(),
+      [](const auto& book1, const auto& book2) { return book1.get_name() < book2.get_name(); });
 }
