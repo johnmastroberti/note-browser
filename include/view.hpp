@@ -28,12 +28,18 @@ class BrowserView {
     void update_notes_menu();
     void update_preview_window();
     void register_callbacks();
+    void display_preview_text();
 
 
   public:
     BrowserView(CursesSession *session, NoteBinder *binder);
     ~BrowserView();
     void start();
+
+    void course_scroll_up();
+    void course_scroll_down();
+    void notes_scroll_up();
+    void notes_scroll_down();
 
     BrowserView(const BrowserView&) = delete;
     BrowserView& operator=(const BrowserView&) = delete;

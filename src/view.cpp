@@ -52,7 +52,7 @@ BrowserView::BrowserView(CursesSession *session, NoteBinder *binder)
   session->refresh();
   m_course_menu->refresh();
   m_notes_menu->refresh();
-  m_preview_window->refresh();
+  if (m_preview_window) m_preview_window->refresh();
 }
 
 
@@ -66,10 +66,76 @@ BrowserView::~BrowserView() {
 void BrowserView::start() { m_session->loop(); }
 
 
+void BrowserView::notes_scroll_up() {
+  if (m_current_book_ptr->size()) {
+    m_notes_menu->sel_up();
+    if (current_file != m_notes_menu->get_current_item().name) {
+      m_current_file_ptr--;
+      current_file = m_notes_menu->get_current_item().name;
+      update_preview_window();
+    }
+    m_notes_menu->refresh();
+  }
+}
+
+
+void BrowserView::notes_scroll_down() {
+  if (m_current_book_ptr->size()) {
+    m_notes_menu->sel_down();
+    if (current_file != m_notes_menu->get_current_item().name) {
+      m_current_file_ptr++;
+      current_file = m_notes_menu->get_current_item().name;
+      update_preview_window();
+    }
+    m_notes_menu->refresh();
+  }
+}
+
+
+void BrowserView::course_scroll_up() {
+  m_course_menu->sel_up();
+  if (current_course != m_course_menu->get_current_item().name) {
+    m_current_book_ptr--;
+    current_course = m_course_menu->get_current_item().name;
+    update_notes_menu();
+    update_preview_window();
+  }
+  m_course_menu->refresh();
+}
+
+
+void BrowserView::course_scroll_down() {
+  m_course_menu->sel_down();
+  if (current_course != m_course_menu->get_current_item().name) {
+    m_current_book_ptr++;
+    current_course = m_course_menu->get_current_item().name;
+    update_notes_menu();
+    update_preview_window();
+  }
+  m_course_menu->refresh();
+}
+
+
 void BrowserView::register_callbacks() {
   m_session->register_callback('q', [](decltype(KEY_UP)) { return true; });
 
-  m_session->register_callback('j', [](decltype(KEY_UP)) {
+  m_session->register_callback('j', [this](decltype(KEY_UP)) {
+      this->notes_scroll_down();
+      return false;
+  });
+
+  m_session->register_callback('k', [this](decltype(KEY_UP)) {
+      this->notes_scroll_up();
+      return false;
+  });
+
+  m_session->register_callback('n', [this](decltype(KEY_UP)) {
+      this->course_scroll_down();
+      return false;
+  });
+
+  m_session->register_callback('p', [this](decltype(KEY_UP)) {
+      this->course_scroll_up();
       return false;
   });
 }
@@ -83,7 +149,15 @@ void BrowserView::update_notes_menu() {
   m_notes_menu = new Menu{current_course, m_notes_items.at(current_course),
                           nullptr, {course_menu_width+1, 0}, notes_menu_width, -1};
 
-  current_file = m_notes_menu->get_current_item().name;
+  // Check if there are any notes to display
+  if (m_current_book_ptr->size()) {
+    current_file = m_notes_menu->get_current_item().name;
+    m_current_file_ptr = &(*(m_current_book_ptr->begin()));
+  } else {
+    m_notes_menu->printf({1, 3}, "<No notes found>");
+    m_current_file_ptr = nullptr;
+  }
+  m_notes_menu->refresh();
 }
 
 
@@ -94,9 +168,21 @@ void BrowserView::update_preview_window() {
   constexpr auto notes_menu_width = 35;
   auto preview_offset = notes_menu_width + course_menu_width+2;
 
-  m_preview_window = new Window{nullptr, {preview_offset, 0}};
-  m_preview_window->display_title(current_file);
+  // Only make a new window if there are notes to display
+  if (m_current_file_ptr) {
+    m_preview_window = new Window{nullptr, {preview_offset, 0}};
+    m_preview_window->display_title(current_file);
 
+    display_preview_text();
+
+    m_preview_window->refresh();
+  } else {
+    m_preview_window = nullptr;
+  }
+}
+
+
+void BrowserView::display_preview_text() {
   // Display the outline nicely
   int line = 3;
   for (const auto& s : m_current_file_ptr->m_sections) {
@@ -104,5 +190,4 @@ void BrowserView::update_preview_window() {
     m_preview_window->printf({s.level*2 + 3, line}, s.heading.c_str());
     line++;
   }
-
 }
