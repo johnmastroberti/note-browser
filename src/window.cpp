@@ -32,6 +32,9 @@ Window::Window(Window *parent, Coords pos, int w, int h, uint64_t opts)
 
 Window::~Window() {
   wborder(m_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+  for (int x=1; x<m_width-1; x++)
+    for (int y=1; y<m_height-1; y++)
+      this->printch({x,y}, ' ');
   this->refresh();
   delwin(m_win);
 }
@@ -74,7 +77,7 @@ void Window::redraw_border() {
 }
 
 
-void Window::println(Coords pos1, Coords pos2, decltype(ACS_HLINE) symb) {
+void Window::println(Coords pos1, Coords pos2, chtype symb) {
   auto diff = pos2 - pos1;
   if (diff.x == 0) {
     auto& top = (diff.y > 0) ? pos1 : pos2;
@@ -86,7 +89,7 @@ void Window::println(Coords pos1, Coords pos2, decltype(ACS_HLINE) symb) {
 }
 
 
-void Window::printch(Coords pos, decltype(ACS_HLINE) symb) {
+void Window::printch(Coords pos, chtype symb) {
   mvwaddch(m_win, pos.y, pos.x, symb);
 }
 

@@ -50,9 +50,9 @@ class Window {
       if (ret != OK) throw;
     }
 
-    void println(Coords pos1, Coords pos2, decltype(ACS_HLINE) symb);
+    void println(Coords pos1, Coords pos2, chtype symb);
 
-    void printch(Coords pos, decltype(ACS_HLINE) symb);
+    void printch(Coords pos, chtype symb);
 
     inline auto get_winptr() { return m_win; }
     inline auto get_width() const { return m_width; }
