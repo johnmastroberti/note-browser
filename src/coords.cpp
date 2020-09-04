@@ -1,4 +1,6 @@
 #include "coords.hpp"
+#include <cstdio>
+using namespace std::string_literals;
 
 Coords::Coords(const std::initializer_list<int>& l) {
   if (l.size() != 2) throw;
@@ -8,6 +10,11 @@ Coords::Coords(const std::initializer_list<int>& l) {
   y = *it;
 }
 
+Coords::operator std::string() const {
+  char buff[200];
+  sprintf(buff, "{%d, %d}", x, y);
+  return std::string(buff);
+}
 
 
 Coords& Coords::operator+=(const Coords& o) {

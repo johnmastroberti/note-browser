@@ -1,5 +1,6 @@
 #pragma once
 #include <initializer_list>
+#include <string>
 
 // Basic xy coordinate struct
 struct Coords {
@@ -10,6 +11,8 @@ struct Coords {
 
   Coords& operator+=(const Coords& o);
   Coords& operator-=(const Coords& o);
+
+  operator std::string() const;
 };
 
 Coords operator+(const Coords& c1, const Coords& c2);
