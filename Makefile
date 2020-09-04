@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-Iinclude -Wall -Wextra -Wpedantic -Wshadow -Wno-narrowing -Werror -std=c++20
+CXXFLAGS=-Iinclude -Wall -Wextra -Wpedantic -Wshadow -Wno-narrowing -Wno-sign-compare -Werror -std=c++20
 DEBUG_FLAGS=-g
 RELEASE_FLAGS=-O3 -flto
 LD=g++
