@@ -25,10 +25,16 @@ class BrowserView {
     std::vector<MenuItem> m_course_items;
     std::map<std::string, std::vector<MenuItem>> m_notes_items;
 
+    bool reset_current_item = true;
+
+    void update_course_menu();
     void update_notes_menu();
     void update_preview_window();
     void register_callbacks();
     void display_preview_text();
+
+    void open_pdf();
+    void open_tex();
 
 
   public:
@@ -40,6 +46,7 @@ class BrowserView {
     void course_scroll_down();
     void notes_scroll_up();
     void notes_scroll_down();
+    void handle_resize();
 
     BrowserView(const BrowserView&) = delete;
     BrowserView& operator=(const BrowserView&) = delete;
