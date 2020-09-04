@@ -4,3 +4,4 @@ appd
 tags
 ncurses-testing/*
 log.txt
+resize_log.txt

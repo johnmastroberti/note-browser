@@ -64,6 +64,7 @@ void Window::refresh() {
 
   touchwin(m_win);
   wrefresh(m_win);
+  getyx(m_win, m_cpos.y, m_cpos.x);
 }
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <ncurses.h>
+#include <cstdio>
 #include <iostream>
 
 #include "coords.hpp"
@@ -13,6 +14,7 @@ class Window {
     Window *m_parent;
     WINDOW *m_win;
     Coords m_pos;
+    Coords m_cpos;
     int m_width, m_height;
 
     void update_pos();
@@ -41,19 +43,28 @@ class Window {
 
     template<typename... Args>
     void printf(const char *fmt, Args... args) {
-      auto ret = wprintw(m_win, fmt, args...);
-      std::cout << "here";
-      if (ret != OK) throw std::runtime_error("wprintw failed for the string "s + std::string(fmt));
+      this->printf(m_cpos, fmt, args...);
     }
 
     template<typename... Args>
     void printf(Coords pos, const char *fmt, Args... args) {
-      auto ret = mvwprintw(m_win, pos.y, pos.x, fmt, args...);
+      // Truncate the format string if necessary
+      char buff[500];
+      int len_avail = m_width - pos.x;
+      int nprinted = snprintf(buff, len_avail, fmt, args...);
+      if (nprinted >= len_avail) {
+        // Replace end with ...
+        buff[len_avail-2] = '.';
+        buff[len_avail-3] = '.';
+        buff[len_avail-4] = '.';
+      }
+      auto ret = mvwprintw(m_win, pos.y, pos.x, buff);
       if (ret != OK) {
-        std::string message = "mvwprintw failed for the string " + std::string(fmt)
+        std::string message = "mvwprintw failed for the string " + std::string(buff)
           + " at coordinates "s + static_cast<std::string>(pos);
         throw std::runtime_error(message);
       }
+      getyx(m_win, m_cpos.y, m_cpos.x);
     }
 
     void println(Coords pos1, Coords pos2, chtype symb);
