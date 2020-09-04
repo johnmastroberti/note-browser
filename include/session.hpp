@@ -8,7 +8,7 @@ class CursesSession {
   // Abstraction of the ncurses free functions related to global
   // session settings and attributes
   private:
-    typedef decltype(KEY_UP) ktype;
+    typedef chtype ktype;
     std::unordered_map<ktype, std::function<bool(ktype)>> m_callbacks;
 
   public:
