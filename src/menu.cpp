@@ -52,6 +52,16 @@ MenuItem Menu::get_current_item() const {
 }
 
 
+void Menu::set_current_item(int index) {
+  if (index < 0 || index >= m_items.size())
+    throw std::out_of_range("Item index out of range");
+
+  auto *item_ptr = m_itemsptr[index];
+  ::set_current_item(m_menu, item_ptr);
+  this->refresh();
+}
+
+
 void Menu::sel_up() {
   menu_driver(m_menu, REQ_UP_ITEM);
 }

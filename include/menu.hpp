@@ -35,6 +35,7 @@ class Menu : public Window {
     void set_items(const std::vector<MenuItem>& items);
 
     MenuItem get_current_item() const;
+    void set_current_item(int index);
     void sel_up();
     void sel_down();
     void scroll_up();
