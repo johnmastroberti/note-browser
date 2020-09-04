@@ -162,7 +162,7 @@ void BrowserView::open_pdf() {
 
   auto child_pid = fork();
   if (child_pid == 0) {
-    execlp(pdf_viewer, pdf_viewer, file, (const char*) NULL);
+    execlp("st", "st", "-e", pdf_viewer, file, (const char*) NULL);
     throw; // give up if we can't exec
   }
   return;
