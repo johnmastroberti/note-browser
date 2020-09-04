@@ -42,7 +42,7 @@ Window::~Window() {
 
 void Window::resize(int new_width, int new_height) {
   auto ret = wresize(m_win, new_height, new_width);
-  if (ret == ERR) throw;
+  if (ret == ERR) throw std::out_of_range("Bad width or height for window resize");
   update_dims();
 }
 
@@ -53,7 +53,7 @@ void Window::move(Coords new_pos) {
     ret = mvderwin(m_win, new_pos.y, new_pos.x);
   else
     ret = mvwin(m_win, new_pos.y, new_pos.x);
-  if (ret == ERR) throw;
+  if (ret == ERR) throw std::out_of_range("Bad coordinates for new window position");
   update_pos();
 }
 

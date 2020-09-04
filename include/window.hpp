@@ -4,6 +4,8 @@
 
 #include "coords.hpp"
 
+using namespace std::string_literals;
+
 class Window;
 
 class Window {
@@ -41,13 +43,17 @@ class Window {
     void printf(const char *fmt, Args... args) {
       auto ret = wprintw(m_win, fmt, args...);
       std::cout << "here";
-      if (ret != OK) throw;
+      if (ret != OK) throw std::runtime_error("wprintw failed for the string "s + std::string(fmt));
     }
 
     template<typename... Args>
     void printf(Coords pos, const char *fmt, Args... args) {
       auto ret = mvwprintw(m_win, pos.y, pos.x, fmt, args...);
-      if (ret != OK) throw;
+      if (ret != OK) {
+        std::string message = "mvwprintw failed for the string " + std::string(fmt)
+          + " at coordinates "s + static_cast<std::string>(pos);
+        throw std::runtime_error(message);
+      }
     }
 
     void println(Coords pos1, Coords pos2, chtype symb);

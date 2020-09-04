@@ -4,6 +4,9 @@
 #include <fstream>
 #include <regex>
 #include <algorithm>
+#include <exception>
+
+using namespace std::string_literals;
 
 NoteFile::NoteFile(const fs::path& file)
   : m_path{file}, m_file_name{file.filename()}
@@ -49,7 +52,8 @@ NoteBook::NoteBook(const fs::path& course)
   : m_course_path{course},
     m_notes_path{course / "notes"}
 {
-  if (!fs::is_directory(m_notes_path)) throw;
+  if (!fs::is_directory(m_notes_path))
+    throw std::invalid_argument(m_course_path.string() + " does not contain a notes directory"s);
   // Get the course name
   std::ifstream readme;
   readme.open(course / "README.md");
